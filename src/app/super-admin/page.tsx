@@ -1,5 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar"
-import { ChartBarInteractive } from "@/components/chart-bar-interactive"
+// import { ChartBarInteractive } from "@/components/chart-bar-interactive"
 import { DataTable } from "@/components/data-table"
 import { SectionCards } from "@/components/section-cards"
 import { SiteHeader } from "@/components/site-header"
