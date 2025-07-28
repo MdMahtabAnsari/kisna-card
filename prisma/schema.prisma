@@ -1,0 +1,158 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String        @id @default(uuid())
+  email          String        @unique
+  name           String
+  phone          String        @unique
+  userId         String        @unique
+  password       String
+  role           Role          @default(USER)
+  status         UserStatus    @default(PENDING)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  areas          Area[]        @relation("UserArea")
+  shop           Shop?
+  createdById    String?
+  createdBy      User?         @relation("UserCreatedBy", fields: [createdById], references: [id])
+  createdUser    User[]        @relation("UserCreatedBy")
+  approvedById   String?
+  approvedBy     User?         @relation("UserApprovedBy", fields: [approvedById], references: [id])
+  approvedUser   User[]        @relation("UserApprovedBy")
+  card           Card[]        @relation("UserCard")
+  cardCreatedBy  Card[]        @relation("CardCreatedBy")
+  cardApprovedBy Card[]        @relation("CardApprovedBy")
+  transactions   Transaction[] @relation("TransactionPerformedBy")
+  documents      Document[]    @relation("UserDocument")
+  shopCreatedBy  Shop[]        @relation("ShopCreatedBy")
+  shopApprovedBy Shop[]        @relation("ShopApprovedBy")
+  areaCreatedBy  Area[]        @relation("AreaCreatedBy")
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPER_ADMIN
+  SHOP_OWNER
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  DELETED
+  BANNED
+}
+
+model Area {
+  id          String   @id @default(uuid())
+  name        String
+  code        String   @unique
+  users       User[]   @relation("UserArea")
+  createdById String
+  createdBy   User     @relation("AreaCreatedBy", fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+  shops       Shop[]   @relation("AreaShop")
+  updatedAt   DateTime @updatedAt
+}
+
+model Shop {
+  id           String     @id @default(uuid())
+  name         String
+  ownerId      String     @unique
+  owner        User       @relation(fields: [ownerId], references: [id])
+  areaId       String
+  area         Area       @relation("AreaShop", fields: [areaId], references: [id])
+  createdById  String
+  createdBy    User       @relation("ShopCreatedBy", fields: [createdById], references: [id])
+  approvedById String
+  approvedBy   User       @relation("ShopApprovedBy", fields: [approvedById], references: [id])
+  status       ShopStatus @default(PENDING)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+enum ShopStatus {
+  OPEN
+  CLOSED
+  PENDING
+}
+
+model Card {
+  id           String        @id @default(uuid())
+  cardNumber   String        @unique
+  cardHolder   String
+  expiryDate   DateTime
+  cvv          String
+  url          String
+  points       Float         @default(0)
+  userId       String        @unique
+  user         User          @relation("UserCard", fields: [userId], references: [id])
+  createdById  String
+  createdBy    User?         @relation("CardCreatedBy", fields: [createdById], references: [id])
+  approvedById String
+  approvedBy   User?         @relation("CardApprovedBy", fields: [approvedById], references: [id])
+  status       CardStatus    @default(ACTIVE)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  transactions Transaction[] @relation("CardTransaction")
+}
+
+enum CardStatus {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+  EXPIRED
+}
+
+model Transaction {
+  id              String          @id @default(uuid())
+  cardId          String
+  card            Card            @relation("CardTransaction", fields: [cardId], references: [id])
+  amount          Float
+  type            TransactionType
+  remarks         String
+  transactionDate DateTime        @default(now())
+  performedById   String
+  performedBy     User            @relation("TransactionPerformedBy", fields: [performedById], references: [id])
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+enum TransactionType {
+  ADD
+  REDEEM
+  ADJUST
+  CORRECTION
+}
+
+model Document {
+  id        String       @id @default(uuid())
+  url       String       @unique
+  type      DocumentType
+  userId    String
+  user      User         @relation("UserDocument", fields: [userId], references: [id])
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+enum DocumentType {
+  PHOTO
+  AADHAAR_FRONT
+  AADHAAR_BACK
+}
