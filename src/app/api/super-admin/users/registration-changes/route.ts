@@ -6,6 +6,7 @@ import { ApiResponseSchema } from '@/lib/schema/api-response/api-response';
 import { getToken } from 'next-auth/jwt';
 import { statisticsSchema } from '@/lib/schema/common/statistics';
 
+// Fetch registration changes for super admin
 export async function GET(request: NextRequest): Promise<NextResponse<ApiResponseSchema>> {
   try {
     const token = await getToken({
@@ -64,6 +65,13 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
       },
     });
 
+    const totalUsers = await prisma.user.count({
+      where: {
+        role: parsedParams.data.role,
+        status: parsedParams.data.status,
+      },
+    });
+
     let percentChange = 0;
     if (lastMonthCount > 0) {
       percentChange = ((thisMonthCount - lastMonthCount) / lastMonthCount) * 100;
@@ -78,6 +86,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
         lastMonthCount,
         thisMonthCount,
         percentChange: Number(percentChange.toFixed(2)),
+        totalUsers
       },
       isOperational: true,
       statusCode: 200

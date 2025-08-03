@@ -4,6 +4,8 @@ import { ApiResponseSchema } from "@/lib/schema/api-response/api-response";
 import {superAdminCreateUserSchema} from "@/lib/schema/user";
 import { getToken } from "next-auth/jwt";
 
+//  create a new user by super admin
+
 export async function POST(request: NextRequest): Promise<NextResponse<ApiResponseSchema>> {
   try {
     const token = await getToken({

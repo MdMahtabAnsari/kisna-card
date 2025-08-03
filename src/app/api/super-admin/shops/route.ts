@@ -5,6 +5,7 @@ import { areaOrStatusSchema, ShopStatusSchema } from "@/lib/schema/common/shop";
 import { createShopSchema, updateShopSchema } from "@/lib/schema/shop";
 import { getToken } from "next-auth/jwt";
 
+// get shops by area or status by super admin
 
 export async function GET(request: NextRequest): Promise<NextResponse<ApiResponseSchema>> {
   try {
@@ -117,6 +118,8 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
   }
 }
 
+// Create a new shop by super admin
+
 
 export async function POST(request: NextRequest): Promise<NextResponse<ApiResponseSchema>> {
   try {
@@ -181,6 +184,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
     }, { status: 500 });
   }
 }
+
+// update a shop by super admin
 
 export async function PUT(request: NextRequest): Promise<NextResponse<ApiResponseSchema>> {
   try {

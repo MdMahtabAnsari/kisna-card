@@ -5,6 +5,8 @@ import { createAreaSchema, updateAreaSchema } from "@/lib/schema/area";
 import { getToken } from "next-auth/jwt";
 import { nameOrCodeSchema } from "@/lib/schema/common/area";
 
+// Create a new area by super admin
+
 export async function POST(request: NextRequest): Promise<NextResponse<ApiResponseSchema>> {
   try {
     const token = await getToken({
@@ -66,6 +68,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
   }
 }
 
+// Update an existing area by super admin
 
 export async function PUT(request: NextRequest): Promise<NextResponse<ApiResponseSchema>> {
   try {
@@ -129,6 +132,7 @@ export async function PUT(request: NextRequest): Promise<NextResponse<ApiRespons
   }
 }
 
+//  Get an area by name or code
 
 export async function GET(request: NextRequest): Promise<NextResponse<ApiResponseSchema>> {
   try {
@@ -212,3 +216,4 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
     }, { status: 500 });
   }
 }
+

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db/prisma";
 import { ApiResponseSchema } from "@/lib/schema/api-response/api-response";
 import { getToken } from "next-auth/jwt";
 
+// Fetch total shops count for super admin
 
 export async function GET(request: NextRequest): Promise<NextResponse<ApiResponseSchema>> {
   try {

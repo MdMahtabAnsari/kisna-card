@@ -5,25 +5,27 @@ import { startOfMonth, endOfMonth, subMonths } from 'date-fns';
 import { ApiResponseSchema } from '@/lib/schema/api-response/api-response';
 import { getToken } from 'next-auth/jwt';
 
+// Fetch registration changes for super admin
+
 export async function GET(request: NextRequest): Promise<NextResponse<ApiResponseSchema>> {
   try {
     const token = await getToken({
-          req: request,
-          secret: process.env.NEXTAUTH_SECRET,
-          cookieName: process.env.NODE_ENV === "production"
-            ? "__Secure-next-auth.session-token"
-            : "next-auth.session-token",
-        });
-    
-        if (!token || token.role !== "SUPER_ADMIN") {
-          return NextResponse.json({
-            message: "Unauthorized",
-            status: "error",
-            isOperational: true,
-            data: null,
-            statusCode: 403
-          }, { status: 403 });
-        }
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+      cookieName: process.env.NODE_ENV === "production"
+        ? "__Secure-next-auth.session-token"
+        : "next-auth.session-token",
+    });
+
+    if (!token || token.role !== "SUPER_ADMIN") {
+      return NextResponse.json({
+        message: "Unauthorized",
+        status: "error",
+        isOperational: true,
+        data: null,
+        statusCode: 403
+      }, { status: 403 });
+    }
     const now = new Date();
     const thisMonthStart = startOfMonth(now);
     const lastMonthStart = startOfMonth(subMonths(now, 1));
@@ -57,7 +59,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
     return NextResponse.json({
       message: "Registration changes fetched successfully",
       status: "success",
-    data: {
+      data: {
         lastMonthCount,
         thisMonthCount,
         percentChange: Number(percentChange.toFixed(2)),

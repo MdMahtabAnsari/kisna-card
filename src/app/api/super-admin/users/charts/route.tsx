@@ -6,6 +6,7 @@ import { chartSchema } from "@/lib/schema/common/chart";
 import { subMonths } from "date-fns";
 import { groupByInterval } from "@/lib/helpers/group-by-interval";
 
+// fetch user statistics for super admin
 
 export async function GET(request: NextRequest): Promise<NextResponse<ApiResponseSchema>> {
     try{
